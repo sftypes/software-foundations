@@ -33,6 +33,6 @@ Our answers to exercises in http://www.cis.upenn.edu/~bcpierce/sf
 ### Edit and submit exercises.
 
 1. Start with `Basics.v`, fill in the blanks, and ensure it passes
-   the proof assistant.
-2. Rename it to `[your_github_name]-Basics.v` and submit it
+   the proof assistant: `coqc Basics.v`
+2. Rename it to `[your_github_name]_Basics.v` and submit it
    as a pull request to this repo.

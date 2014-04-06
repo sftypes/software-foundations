@@ -989,7 +989,7 @@ Notation "x * y" := (mult x y)
 
 Fixpoint plus' (n : nat) (m : nat) : nat :=
   match n with
-    | O => m
+    | 0 => m
     | S n' => S (plus' n' m)
   end.
 
