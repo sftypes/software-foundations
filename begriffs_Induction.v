@@ -356,11 +356,11 @@ Theorem plus_rearrange_firsttry : forall n m p q : nat,
   (n + m) + (p + q) = (m + n) + (p + q).
 Proof.
   intros n m p q.
-  (* We just need to swap (n + m) for (m + n)...
-     it seems like plus_comm should do the trick! *)
-  rewrite -> plus_comm.
-  (* Doesn't work...Coq rewrote the wrong plus! *)
-Abort.
+
+  assert (H: n + m = m + n).
+    rewrite -> plus_comm. reflexivity.
+  rewrite H. reflexivity.
+Qed.
 
 (** To get [plus_comm] to apply at the point where we want it, we can
     introduce a local lemma stating that [n + m = m + n] (for
@@ -384,19 +384,49 @@ Proof.
 Theorem plus_swap : forall n m p : nat, 
   n + (m + p) = m + (n + p).
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros m n p.
+  assert (H: n + (m + p) = (n + m) + p).
+    rewrite plus_assoc. reflexivity.
+  assert (K: m + (n + p) = (m + n) + p).
+    rewrite plus_assoc. reflexivity.
+  rewrite H. rewrite K.
+  assert (L: m + n = n + m).
+    rewrite plus_comm. reflexivity.
+  rewrite L. reflexivity.
+Qed.
 
 (** Now prove commutativity of multiplication.  (You will probably
     need to define and prove a separate subsidiary theorem to be used
     in the proof of this one.)  You may find that [plus_swap] comes in
     handy. *)
 
+Theorem mult_1_r : forall n : nat,
+  n * 1 = n.
+Proof.
+  induction n as [| n'].
+  Case "base". simpl. reflexivity.
+  Case "step". simpl. rewrite IHn'. reflexivity.
+Qed.
+
+Theorem mult_Sm : forall m n : nat,
+  n * S m = n + n * m.
+Proof.
+  intros m n.
+  induction n as [| n'].
+    Case "base". simpl. reflexivity.
+    Case "step". simpl. rewrite IHn'.
+      rewrite plus_swap. reflexivity.
+Qed.
+
 Theorem mult_comm : forall m n : nat,
  m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros m n.
+  induction m as [| m'].
+    Case "base". rewrite mult_0_r. simpl. reflexivity.
+    Case "step". simpl. rewrite mult_Sm. rewrite IHm'.
+      reflexivity.
+Qed.
 
 (** **** Exercise: 2 stars, optional (evenb_n__oddb_Sn) *)
 
@@ -405,8 +435,16 @@ Proof.
 Theorem evenb_n__oddb_Sn : forall n : nat,
   evenb n = negb (evenb (S n)).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n.
+  induction n as [| n'].
+    Case "base". simpl. reflexivity.
+    Case "step". simpl.
+      rewrite IHn'. rewrite negb_involutive.
+
+      destruct n' as [| c].
+      SCase "n' = 0". simpl. reflexivity.
+      SCase "n' = S c". simpl. reflexivity.
+Qed.
 
 (* ###################################################################### *)
 (** * More Exercises *)
@@ -423,12 +461,20 @@ Proof.
 Theorem ble_nat_refl : forall n:nat,
   true = ble_nat n n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  induction n as [| n'].
+    Case "base". simpl. reflexivity.
+    Case "step". simpl. rewrite IHn'. reflexivity.
+Qed.
 
 Theorem zero_nbeq_S : forall n:nat,
   beq_nat 0 (S n) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n.
+  destruct n as [| n'].
+    Case "0". simpl. reflexivity.
+    Case "S n'". simpl. reflexivity.
+Qed.
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.
